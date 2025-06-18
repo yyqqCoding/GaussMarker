@@ -11,7 +11,7 @@
 
 ## 2. Introduction
 
-This is the official implementation of paper ***GaussMarker: Robust Dual-Domain Watermarks for Diffusion Models***.
+This is the official implementation of paper [***GaussMarker: Robust Dual-Domain Watermarks for Diffusion Models***](https://arxiv.org/abs/2506.11444).
 
 As Diffusion Models (DM) generate increasingly realistic images, related issues such as copyright and misuse have become a growing concern. Watermarking is one of the promising solutions. Existing methods inject the watermark into the single-domain of initial Gaussian noise for generation, which suffers from unsatisfactory robustness. 
 This paper presents the first dual-domain DM watermarking approach using a pipelined injector to consistently embed watermarks in both the spatial and frequency domains. To further boost robustness against certain image manipulations and advanced attacks, we introduce a model-independent learnable Gaussian Noise Restorer (GNR) to refine Gaussian noise extracted from manipulated images and enhance detection robustness by integrating the detection scores of both watermarks.
