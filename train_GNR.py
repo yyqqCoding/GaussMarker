@@ -314,7 +314,21 @@ def main(args):
         n_channels=4,           # 输入通道数：对应潜在空间的4个通道
         n_classes=4,            # 输出通道数：恢复的4通道水印信号
         nf=args.model_nf        # 基础特征数：控制网络容量和表达能力
-    ).cuda()
+    )
+
+    # ==================== 多GPU配置 ====================
+    # 检测可用的GPU数量并配置多GPU训练
+    if torch.cuda.device_count() > 1 and args.multi_gpu:
+        print(f"检测到 {torch.cuda.device_count()} 个GPU，启用多GPU训练")
+        model = torch.nn.DataParallel(model)
+        effective_batch_size = args.batch_size * torch.cuda.device_count()
+        print(f"  多GPU模式: DataParallel")
+        print(f"  有效批次大小: {effective_batch_size} (单GPU: {args.batch_size})")
+    else:
+        print(f"使用单GPU训练")
+        effective_batch_size = args.batch_size
+
+    model = model.cuda()
 
     # 统计模型参数数量，评估模型复杂度
     model_parameters = filter(lambda p: p.requires_grad, model.parameters())
@@ -580,6 +594,8 @@ if __name__ == "__main__":
                        help='数据加载器的并行工作进程数')
     parser.add_argument('--num_watermarks', type=int, default=1,
                        help='训练使用的水印模式数量，增加可提升泛化能力')
+    parser.add_argument('--multi_gpu', action='store_true',
+                       help='启用多GPU训练 (DataParallel)')
 
     # ==================== 模型架构参数 ====================
     parser.add_argument('--model_nf', type=int, default=64,
